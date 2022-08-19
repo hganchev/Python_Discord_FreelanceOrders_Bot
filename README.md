@@ -1,2 +1,2 @@
-# Python_Discord_TestBot
-Test bot for Discord
+# Python_Discord_FreelanceOrders_Bot
+Test bot for Freelance Orders
