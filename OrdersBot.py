@@ -72,6 +72,7 @@ class Offer(discord.ui.View):
         self,
         interaction: discord.Interaction, 
         button: discord.ui.Button):
+        self.button_DeclineOffer.disabled = True
         button.disabled = True
         await interaction.message.reply("The order is beeing accepted")
         await interaction.response.edit_message(view = self)
@@ -85,6 +86,7 @@ class Offer(discord.ui.View):
         self,
         interaction: discord.Interaction, 
         button: discord.ui.Button):
+        self.button_AcceptOffer.disabled = True
         button.disabled = True
         await interaction.message.reply("The order is beeing declined")
         await interaction.response.edit_message(view = self)
