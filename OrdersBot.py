@@ -1,48 +1,47 @@
 import discord
 import discord.interactions
+import Orders
 from discord import SelectMenu, SelectOption
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
 
+load_dotenv()
+Order = Orders.Orders()
 
-# client = discord.Client(intents=discord.Intents.default())
+### set discord bot
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 intents.dm_messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-load_dotenv()
-
+###
 class Order(discord.ui.View):
     def __init__(self):
-        super().__init__(timeout=0)
+        super().__init__(timeout=5)
 
-    @discord.ui.button(label="Make Order", style=discord.ButtonStyle.green)
-    async def menuOrder(self,interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.message.reply("You are in orders")
     @discord.ui.select( # the decorator that lets you specify the properties of the select menu
         placeholder = "Choose an Order Option!",
         min_values = 1,
         max_values = 1,
-        options = [
-                discord.SelectOption(
-                    label="Option 1",
-                    description="Pick this if you want [Option 1]!"
-                ),
-                discord.SelectOption(
-                    label="Option 2",
-                    description="Pick this if you want [Option 2]!"
-                ),
-                discord.SelectOption(
-                    label="Option 3",
-                    description="Pick this if you want [Option 3]!"
-                )
-            ]
+        options = Order.OrderOptions()
     )
     async def select_Order(self, interaction: discord.Interaction, select: discord.ui.Select):
         await interaction.response.send_message(f"Nice! You Selected {select.values[0]}")
+
+    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
+        placeholder = "Choose a Payment method!",
+        min_values = 1,
+        max_values = 1,
+        options = Order.PaymentMethods()
+    )
+    async def select_Payment(self, interaction: discord.Interaction, select: discord.ui.Select):
+        await interaction.response.send_message(f"Nice! You Selected {select.values[0]}")
+
+    @discord.ui.button(label="Make an Order", style=discord.ButtonStyle.green)
+    async def button_MakeOrder(self,interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Your order is beeing processed...")
 
 ### Client-bot commands
 @bot.command()
