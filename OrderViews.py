@@ -1,14 +1,9 @@
-from email import message
-from tkinter import filedialog
 import discord
-from socket import timeout
 from Orders import Orders
 from datetime import datetime
-import os
 ### Reference to Orders
 OrdersClass = Orders()
-currentlocation = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(currentlocation, 'OrdersFiles')
+
 ### Views and Modals
 ## Order View
 class Order(discord.ui.View):
