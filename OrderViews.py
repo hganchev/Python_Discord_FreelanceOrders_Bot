@@ -1,10 +1,14 @@
+from email import message
+from tkinter import filedialog
 import discord
 from socket import timeout
 from Orders import Orders
 from datetime import datetime
+import os
 ### Reference to Orders
 OrdersClass = Orders()
-
+currentlocation = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(currentlocation, 'OrdersFiles')
 ### Views and Modals
 ## Order View
 class Order(discord.ui.View):
@@ -35,6 +39,7 @@ class Order(discord.ui.View):
         self, 
         interaction: discord.Interaction, 
         select: discord.ui.Select):
+        interaction.guild = discord.Object(952610014370099240)
         select.disabled = True
         await interaction.message.reply(f"Nice! You Selected {select.values[0]}")
         await interaction.response.edit_message(view = self)
@@ -46,6 +51,7 @@ class Order(discord.ui.View):
         self,
         interaction: discord.Interaction, 
         button: discord.ui.Button):
+        interaction.guild = discord.Object(952610014370099240)
         button.disabled = True
         await interaction.message.reply("Your order is beeing sent for processing...")
         await interaction.response.edit_message(view = self)
@@ -85,18 +91,43 @@ class Offer(discord.ui.View):
 ## Order Modal
 class modalOrder(discord.ui.Modal, title='Example'):
     def __init__(self):
-        super().__init__(timeout=5)
+        super().__init__(timeout=10)
 
+    # Name
+    Name = discord.ui.TextInput(
+        label='Name',
+        style=discord.TextStyle.short,
+        placeholder="What is your name?"
+    )
+    # Email
+    Email = discord.ui.TextInput(
+        label='Email',
+        style=discord.TextStyle.short,
+        placeholder="What is your email?"
+    )
+    # Order Specifications
     OrderSpec = discord.ui.TextInput(
-        label= "add order specification", 
+        label="Add Order Specification", 
         style=discord.TextStyle.long,
-        placeholder="What the project contains, what is about?")
+        placeholder="What the project contains, what is about?"
+    )
+
+    # Attachments
+    AttachedFileName = discord.ui.TextInput(
+        label="Add file path", 
+        style=discord.TextStyle.short,
+        placeholder="What the project contains, what is about?"
+    )
     
+    # Submit 
     async def on_submit(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title= self.title, 
+            title=self.title, 
             description=f"Description: {self.OrderSpec.value}",
-            timestamp= datetime.now(),
+            timestamp=datetime.now(),
             color=discord.Color.blue())
         embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
-        await interaction.response.send_message(embed = embed)
+        # try taking file name, extension(pdf,txt,etc.)
+        file = discord.File(fp=self.AttachedFileName.value, filename='OrderSpec.pdf')
+        await interaction.response.send_message(embed = embed, file=file)
+        
