@@ -5,6 +5,9 @@ import os
 from dotenv import load_dotenv
 import OrderViews
 
+### Set Global vars
+load_dotenv()
+GUILD_CHANNEL_ID = os.getenv('Guild_Id')
 ### Set Client
 class MyClient(discord.Client):
     def __init__(self) -> None:
@@ -19,7 +22,7 @@ class MyClient(discord.Client):
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
-        await self.tree.sync(guild=discord.Object(952610014370099240))
+        await self.tree.sync(guild=discord.Object(GUILD_CHANNEL_ID))
 
     async def on_member_join(self, member: Optional[discord.Member] = None):
         guild = member.guild
@@ -29,22 +32,21 @@ class MyClient(discord.Client):
 
      
 ### Create Bot       
-load_dotenv()
 bot = MyClient()
 
 ### Client-bot Commands
 ## tree(guild) global (/command) commands
-@bot.tree.command(guild=discord.Object(952610014370099240))
+@bot.tree.command(guild=discord.Object(GUILD_CHANNEL_ID))
 async def order(interaction: discord.Interaction):
     view = OrderViews.Order()
     await interaction.response.send_message(view = view, ephemeral=True)
 
-@bot.tree.command(guild=discord.Object(952610014370099240))
+@bot.tree.command(guild=discord.Object(GUILD_CHANNEL_ID))
 async def offer(interaction: discord.Interaction):
     view = OrderViews.Offer()
     await interaction.response.send_message(view = view, ephemeral=True)
 
-@bot.tree.command(guild=discord.Object(952610014370099240))
+@bot.tree.command(guild=discord.Object(GUILD_CHANNEL_ID))
 async def modal(interaction: discord.Interaction):
     await interaction.response.send_modal(OrderViews.modalOrder())
 
