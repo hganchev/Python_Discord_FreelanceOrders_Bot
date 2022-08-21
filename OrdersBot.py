@@ -21,10 +21,11 @@ class MyClient(discord.Client):
         print('------')
         await self.tree.sync(guild=discord.Object(952610014370099240))
 
-    async def on_joined(interaction: discord.Interaction, member: Optional[discord.Member] = None):
-        member = member or interaction.user
-        await interaction.response.send_message(f'{member} joined {discord.utils.format_dt(member.joined_at)}')
-        await interaction.response.send_message(f'Hello {member} to my Discord Server!')
+    async def on_member_join(self, member: Optional[discord.Member] = None):
+        guild = member.guild
+        if guild.system_channel is not None:
+            to_send = f'Welcome {member.mention} to {guild.name}!'
+            await guild.system_channel.send(to_send)
 
      
 ### Create Bot       
