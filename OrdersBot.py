@@ -42,7 +42,7 @@ async def order(interaction: discord.Interaction):
 
 @bot.tree.command(guild=GUILD_CHANNEL_ID)
 async def offer(interaction: discord.Interaction):
-    await interaction.response.send_message(view = OrderViews.Offer(), ephemeral=True)
+    await interaction.response.send_modal(OrderViews.modalOffer())
 
 ### Run bot
 bot.run(os.getenv('Discord_Token'))

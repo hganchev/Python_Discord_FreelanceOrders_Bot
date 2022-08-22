@@ -43,7 +43,6 @@ class modalOrder(discord.ui.Modal, title='Order'):
             timestamp=datetime.now(),
             color=discord.Color.blue())
         embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
-        # try taking file name, extension(pdf,txt,etc.)
         file = discord.File(fp=self.AttachedFileName.value, filename='OrderSpec.pdf')
         await interaction.response.send_message(embed = embed, file=file)
 
@@ -51,6 +50,7 @@ class modalOrder(discord.ui.Modal, title='Order'):
 class modalOffer(discord.ui.Modal, title='Offer'):
     def __init__(self):
         super().__init__(timeout=10)
+        
     # Select Order
     @discord.ui.select( # the decorator that lets you specify the properties of the select menu
         placeholder = "Choose an Order!",
@@ -67,13 +67,34 @@ class modalOffer(discord.ui.Modal, title='Offer'):
         await interaction.response.edit_message(view = self)
 
     # Name 
-
+    Name = discord.ui.TextInput(
+        label='Name',
+        style=discord.TextStyle.short,
+        placeholder="What is your name?"
+    )
     # Email
+    Email = discord.ui.TextInput(
+        label='Email',
+        style=discord.TextStyle.short,
+        placeholder="What is your email?"
+    )
 
     # Offer Description
+    OfferSpec = discord.ui.TextInput(
+        label="Add Offer Description", 
+        style=discord.TextStyle.long,
+        placeholder="What the project will contain, what will be the tools used?"
+    )
 
     # Submit
-        
+    async def on_submit(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title=self.title, 
+            description=f"Description: {self.OfferSpec.value}",
+            timestamp=datetime.now(),
+            color=discord.Color.blue())
+        embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
+        await interaction.response.send_message(embed = embed)
 
 ## Order View
 class ViewOrder(discord.ui.View):
