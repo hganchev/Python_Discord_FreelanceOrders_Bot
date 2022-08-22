@@ -1,3 +1,4 @@
+from turtle import title
 import discord
 from Orders import Orders
 from datetime import datetime
@@ -44,28 +45,15 @@ class modalOrder(discord.ui.Modal, title='Order'):
             color=discord.Color.blue())
         embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
         file = discord.File(fp=self.AttachedFileName.value, filename='OrderSpec.pdf')
-        await interaction.response.send_message(embed = embed, file=file)
+        await interaction.response.send_message(embed = embed, file=file, view = ViewOrder())
 
 ## Offer Modal
 class modalOffer(discord.ui.Modal, title='Offer'):
     def __init__(self):
         super().__init__(timeout=10)
         
-    # Select Order
-    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-        placeholder = "Choose an Order!",
-        min_values = 1,
-        max_values = 1,
-        options = OrdersClass.OrderOptions()
-    )
-    async def select_Order(
-        self, 
-        interaction: discord.Interaction, 
-        select: discord.ui.Select):
-        select.disabled = True
-        await interaction.message.reply(f"Nice! You Selected {select.values[0]}")
-        await interaction.response.edit_message(view = self)
-
+    # Order ID field
+    
     # Name 
     Name = discord.ui.TextInput(
         label='Name',
@@ -94,7 +82,7 @@ class modalOffer(discord.ui.Modal, title='Offer'):
             timestamp=datetime.now(),
             color=discord.Color.blue())
         embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
-        await interaction.response.send_message(embed = embed)
+        await interaction.response.send_message(embed = embed, view=ViewOffer())
 
 ## Order View
 class ViewOrder(discord.ui.View):
@@ -108,10 +96,8 @@ class ViewOrder(discord.ui.View):
         self,
         interaction: discord.Interaction, 
         button: discord.ui.Button):
-        interaction.guild = discord.Object(952610014370099240)
         button.disabled = True
-        await interaction.message.reply("Your offer is beeing sent for processing...")
-        await interaction.response.edit_message(view = self)
+        await interaction.response.send_modal(modalOffer())
 
 ## Offer View
 class ViewOffer(discord.ui.View):
@@ -128,6 +114,7 @@ class ViewOffer(discord.ui.View):
         button: discord.ui.Button):
         self.button_DeclineOffer.disabled = True
         button.disabled = True
+        interaction.guild_id=discord.Object(952610014370099240)
         await interaction.message.reply("The order is beeing accepted")
         await interaction.response.edit_message(view = self)
         #await interaction.data.copy - copy the response and save
@@ -142,26 +129,6 @@ class ViewOffer(discord.ui.View):
         button: discord.ui.Button):
         self.button_AcceptOffer.disabled = True
         button.disabled = True
+        interaction.guild_id=discord.Object(952610014370099240)
         await interaction.message.reply("The order is beeing declined")
-        await interaction.response.edit_message(view = self)
-
-## Modal Accept Offer
-class modalAcceptOffer(discord.ui.Modal):
-    def __init__(self):
-        super().__init__(timeout=5)
-
-    # Payment method
-    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-        placeholder = "Choose a Payment method!",
-        min_values = 1,
-        max_values = 1,
-        options = OrdersClass.PaymentMethods()
-    )
-    async def select_Payment(
-        self, 
-        interaction: discord.Interaction, 
-        select: discord.ui.Select):
-        interaction.guild = discord.Object(952610014370099240)
-        select.disabled = True
-        await interaction.message.reply(f"Nice! You Selected {select.values[0]}")
         await interaction.response.edit_message(view = self)
