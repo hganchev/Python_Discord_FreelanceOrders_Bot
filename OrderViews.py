@@ -2,8 +2,12 @@ from turtle import title
 import discord
 from Orders import Orders
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 ### Reference to Orders
+load_dotenv()
 OrdersClass = Orders()
+GUILD_CHANNEL_ID = discord.Object(os.getenv('Guild_Id'))
 
 ### Views and Modals
 ## Order Modal
@@ -114,7 +118,7 @@ class ViewOffer(discord.ui.View):
         button: discord.ui.Button):
         self.button_DeclineOffer.disabled = True
         button.disabled = True
-        interaction.guild_id=discord.Object(952610014370099240)
+        interaction.guild_id=GUILD_CHANNEL_ID
         await interaction.message.reply("The order is beeing accepted")
         await interaction.response.edit_message(view = self)
         #await interaction.data.copy - copy the response and save
@@ -129,6 +133,6 @@ class ViewOffer(discord.ui.View):
         button: discord.ui.Button):
         self.button_AcceptOffer.disabled = True
         button.disabled = True
-        interaction.guild_id=discord.Object(952610014370099240)
+        interaction.guild_id=GUILD_CHANNEL_ID
         await interaction.message.reply("The order is beeing declined")
         await interaction.response.edit_message(view = self)
