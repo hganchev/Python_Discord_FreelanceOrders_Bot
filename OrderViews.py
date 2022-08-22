@@ -5,13 +5,55 @@ from datetime import datetime
 OrdersClass = Orders()
 
 ### Views and Modals
-## Order View
-class Order(discord.ui.View):
+## Order Modal
+class modalOrder(discord.ui.Modal, title='Order'):
     def __init__(self):
-        super().__init__(timeout=5)
+        super().__init__(timeout=10)
 
+    # Name
+    Name = discord.ui.TextInput(
+        label='Name',
+        style=discord.TextStyle.short,
+        placeholder="What is your name?"
+    )
+    # Email
+    Email = discord.ui.TextInput(
+        label='Email',
+        style=discord.TextStyle.short,
+        placeholder="What is your email?"
+    )
+    # Order Specifications
+    OrderSpec = discord.ui.TextInput(
+        label="Add Order Specification", 
+        style=discord.TextStyle.long,
+        placeholder="What the project contains, what is about?"
+    )
+    # Attachments
+    AttachedFileName = discord.ui.TextInput(
+        label="Add file path", 
+        style=discord.TextStyle.short,
+        placeholder="What the project contains, what is about?"
+    )
+    
+    # Submit 
+    async def on_submit(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title=self.title, 
+            description=f"Description: {self.OrderSpec.value}",
+            timestamp=datetime.now(),
+            color=discord.Color.blue())
+        embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
+        # try taking file name, extension(pdf,txt,etc.)
+        file = discord.File(fp=self.AttachedFileName.value, filename='OrderSpec.pdf')
+        await interaction.response.send_message(embed = embed, file=file)
+
+## Offer Modal
+class modalOffer(discord.ui.Modal, title='Offer'):
+    def __init__(self):
+        super().__init__(timeout=10)
+    # Select Order
     @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-        placeholder = "Choose an Order Option!",
+        placeholder = "Choose an Order!",
         min_values = 1,
         max_values = 1,
         options = OrdersClass.OrderOptions()
@@ -24,35 +66,34 @@ class Order(discord.ui.View):
         await interaction.message.reply(f"Nice! You Selected {select.values[0]}")
         await interaction.response.edit_message(view = self)
 
-    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-        placeholder = "Choose a Payment method!",
-        min_values = 1,
-        max_values = 1,
-        options = OrdersClass.PaymentMethods()
-    )
-    async def select_Payment(
-        self, 
-        interaction: discord.Interaction, 
-        select: discord.ui.Select):
-        interaction.guild = discord.Object(952610014370099240)
-        select.disabled = True
-        await interaction.message.reply(f"Nice! You Selected {select.values[0]}")
-        await interaction.response.edit_message(view = self)
+    # Name 
+
+    # Email
+
+    # Offer Description
+
+    # Submit
+        
+
+## Order View
+class ViewOrder(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=5)
 
     @discord.ui.button(
-        label="Make an Order", 
+        label="Make an Offer", 
         style=discord.ButtonStyle.green)
-    async def button_MakeOrder(
+    async def button_MakeOffer(
         self,
         interaction: discord.Interaction, 
         button: discord.ui.Button):
         interaction.guild = discord.Object(952610014370099240)
         button.disabled = True
-        await interaction.message.reply("Your order is beeing sent for processing...")
+        await interaction.message.reply("Your offer is beeing sent for processing...")
         await interaction.response.edit_message(view = self)
 
 ## Offer View
-class Offer(discord.ui.View):
+class ViewOffer(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=5)
         
@@ -83,46 +124,23 @@ class Offer(discord.ui.View):
         await interaction.message.reply("The order is beeing declined")
         await interaction.response.edit_message(view = self)
 
-## Order Modal
-class modalOrder(discord.ui.Modal, title='Example'):
+## Modal Accept Offer
+class modalAcceptOffer(discord.ui.Modal):
     def __init__(self):
-        super().__init__(timeout=10)
+        super().__init__(timeout=5)
 
-    # Name
-    Name = discord.ui.TextInput(
-        label='Name',
-        style=discord.TextStyle.short,
-        placeholder="What is your name?"
+    # Payment method
+    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
+        placeholder = "Choose a Payment method!",
+        min_values = 1,
+        max_values = 1,
+        options = OrdersClass.PaymentMethods()
     )
-    # Email
-    Email = discord.ui.TextInput(
-        label='Email',
-        style=discord.TextStyle.short,
-        placeholder="What is your email?"
-    )
-    # Order Specifications
-    OrderSpec = discord.ui.TextInput(
-        label="Add Order Specification", 
-        style=discord.TextStyle.long,
-        placeholder="What the project contains, what is about?"
-    )
-
-    # Attachments
-    AttachedFileName = discord.ui.TextInput(
-        label="Add file path", 
-        style=discord.TextStyle.short,
-        placeholder="What the project contains, what is about?"
-    )
-    
-    # Submit 
-    async def on_submit(self, interaction: discord.Interaction):
-        embed = discord.Embed(
-            title=self.title, 
-            description=f"Description: {self.OrderSpec.value}",
-            timestamp=datetime.now(),
-            color=discord.Color.blue())
-        embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
-        # try taking file name, extension(pdf,txt,etc.)
-        file = discord.File(fp=self.AttachedFileName.value, filename='OrderSpec.pdf')
-        await interaction.response.send_message(embed = embed, file=file)
-        
+    async def select_Payment(
+        self, 
+        interaction: discord.Interaction, 
+        select: discord.ui.Select):
+        interaction.guild = discord.Object(952610014370099240)
+        select.disabled = True
+        await interaction.message.reply(f"Nice! You Selected {select.values[0]}")
+        await interaction.response.edit_message(view = self)
