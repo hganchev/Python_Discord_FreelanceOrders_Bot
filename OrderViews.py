@@ -48,7 +48,8 @@ class modalOrder(discord.ui.Modal, title='Order'):
             timestamp=datetime.now(),
             color=discord.Color.blue())
         embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
-        file = discord.File(fp=self.AttachedFileName.value, filename='OrderSpec.pdf')
+        path = os.path.realpath(self.AttachedFileName.value)
+        file = discord.File(fp=path, filename='OrderSpec.pdf')
         await interaction.response.send_message(embed = embed, file=file, view = ViewOrder())
 
 ## Offer Modal
