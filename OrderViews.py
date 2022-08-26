@@ -4,7 +4,7 @@ from Orders import Orders
 from datetime import datetime
 from dotenv import load_dotenv
 import os
-import io
+import requests
 ### Reference to Orders
 load_dotenv()
 OrdersClass = Orders()
@@ -49,10 +49,10 @@ class modalOrder(discord.ui.Modal, title='Order'):
             timestamp=datetime.now(),
             color=discord.Color.blue())
         embed.set_author(name=interaction.user, icon_url=interaction.user.avatar)
-        with io.open(self.AttachedFileName.value, 'rb') as filePDF:
-            fileBuff = io.BytesIO(filePDF.read())
-        file = discord.File(fp=fileBuff, filename='OrderSpec.pdf')
-        await interaction.response.send_message(embed = embed, file=file, view = ViewOrder())
+        s = requests.Session()
+        s.mount('file://', FileAdapter())
+        # file = discord.File(fp=fileBuff, filename='OrderSpec.pdf')
+        await interaction.response.send_message(embed = embed, file=r, view = ViewOrder())
 
 ## Offer Modal
 class modalOffer(discord.ui.Modal, title='Offer'):
